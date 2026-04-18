@@ -22,7 +22,7 @@ function AppContent() {
       
       <SidePanel />
 
-      <main className="lg:ml-[280px]">
+      <main className="relative z-10 lg:ml-[280px]">
         <Hero />
         <About />
         <Skills />
