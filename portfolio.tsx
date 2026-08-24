@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   ArrowUpRight,
   ChevronRight,
@@ -312,7 +312,159 @@ const ProjectMockup = ({ project }: { project: Project }) => {
   );
 };
 
+const useSectionRecovery = (sectionId: string, durationMs: number = 1000) => {
+  const [isRecovering, setIsRecovering] = useState(false);
+  const [hasTriggered, setHasTriggered] = useState(false);
+  const ref = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (hasTriggered) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsRecovering(true);
+          setHasTriggered(true);
+          window.dispatchEvent(new CustomEvent('system-recovery-start'));
+          setTimeout(() => {
+            setIsRecovering(false);
+            window.dispatchEvent(new CustomEvent('system-recovery-end'));
+          }, durationMs);
+        }
+      },
+      { threshold: 0.15 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [hasTriggered, durationMs]);
+
+  return { ref, isRecovering };
+};
+
+const AmbientBackground = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  
+  useEffect(() => {
+    let frame: number;
+    const handleMouseMove = (e: MouseEvent) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 });
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(frame);
+    }
+  }, []);
+
+  const fragments = useMemo(() => [
+    'const system = initialize();', 'GET /projects', 'npm run build', 'async function boot()',
+    'STATUS: 200', '0x7F4A', 'SYS_MEM_ALLOC', 'kernel.sys.auth', 'PORT=8080', 'buffer.concat()', 'root@sys:~#'
+  ], []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {fragments.map((frag, i) => (
+        <div 
+          key={i} 
+          className="absolute font-mono text-white opacity-[0.02] whitespace-nowrap select-none"
+          style={{
+            top: `${(i * 13) % 100}%`,
+            left: `${(i * 27) % 100}%`,
+            transform: `translate(${mousePos.x * (i + 1) * 20}px, ${mousePos.y * (i + 1) * 20}px)`,
+            transition: 'transform 0.5s ease-out',
+            fontSize: `${Math.max(10, (i % 3) * 14)}px`
+          }}
+        >
+          {frag}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const BootSequence = ({ onComplete }: { onComplete: () => void }) => {
+  const [lines, setLines] = useState<string[]>([]);
+  
+  useEffect(() => {
+    const sequence = [
+      '[ SYSTEM BOOT ]',
+      'Initializing portfolio...',
+      'Loading identity............. OK',
+      'Loading capabilities........ OK',
+      'Loading work archives....... OK',
+      'Security layer.............. ACTIVE',
+      '',
+      '> welcome, visitor.'
+    ];
+    
+    let delay = 0;
+    sequence.forEach((line, i) => {
+      delay += i === 0 ? 300 : i === sequence.length - 1 ? 800 : 200;
+      setTimeout(() => {
+        setLines(prev => [...prev, line]);
+      }, delay);
+    });
+    
+    setTimeout(() => {
+      onComplete();
+    }, delay + 1000);
+  }, [onComplete]);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-[#070809] flex flex-col justify-center items-center p-6">
+      <div className="w-full max-w-lg font-mono text-xs sm:text-sm text-[#D7FF00] space-y-2">
+        {lines.map((line, i) => (
+          <div key={i}>{line}</div>
+        ))}
+        <div className="animate-pulse w-2 h-4 bg-[#D7FF00] inline-block ml-2 mt-1" />
+      </div>
+    </div>
+  );
+};
+
+const PersistentSystemIndicator = () => {
+  const [status, setStatus] = useState('ONLINE');
+  
+  useEffect(() => {
+    const handleStart = () => setStatus('RECOVERING');
+    const handleEnd = () => setStatus('ONLINE');
+    window.addEventListener('system-recovery-start', handleStart);
+    window.addEventListener('system-recovery-end', handleEnd);
+    return () => {
+      window.removeEventListener('system-recovery-start', handleStart);
+      window.removeEventListener('system-recovery-end', handleEnd);
+    }
+  }, []);
+
+  return (
+    <div className="fixed bottom-4 right-4 z-40 font-mono text-[10px] sm:text-xs flex items-center gap-2 px-3 py-1.5 bg-[#0D1012]/80 backdrop-blur border border-white/10 rounded">
+      {status === 'ONLINE' ? (
+        <span className="w-2 h-2 rounded-full bg-[#D7FF00]" />
+      ) : (
+        <span className="w-2 h-2 rounded-full border border-[#FF2A2A] animate-pulse" />
+      )}
+      <span className={status === 'ONLINE' ? 'text-white/60' : 'text-[#FF2A2A]'}>
+        {status === 'ONLINE' ? 'SYSTEM ONLINE' : 'SYSTEM RECOVERING'}
+      </span>
+    </div>
+  );
+};
+
 export default function App() {
+  const [booting, setBooting] = useState(() => !sessionStorage.getItem('booted'));
+  const handleBootComplete = useCallback(() => {
+    sessionStorage.setItem('booted', 'true');
+    setBooting(false);
+  }, []);
+
+  const { ref: workRef, isRecovering: workRecovering } = useSectionRecovery('work', 1000);
+  const { ref: productsRef, isRecovering: productsRecovering } = useSectionRecovery('products', 1200);
+  const { ref: aboutRef, isRecovering: aboutRecovering } = useSectionRecovery('about', 1400);
+  const { ref: capabilitiesRef, isRecovering: capabilitiesRecovering } = useSectionRecovery('capabilities', 1000);
+  const { ref: contactRef, isRecovering: contactRecovering } = useSectionRecovery('contact', 1400);
+
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [terminalOpen, setTerminalOpen] = useState(false);
@@ -446,7 +598,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#070809] text-[#F2F2F0] font-sans selection:bg-[#D7FF00] selection:text-black relative overflow-x-hidden">
-
+      {booting && <BootSequence onComplete={handleBootComplete} />}
+      <AmbientBackground />
+      <PersistentSystemIndicator />
       {/* Background Architectural Grid Overlay */}
       {showGrid && (
         <div
@@ -688,10 +842,22 @@ export default function App() {
       </section>
 
       {/* Selected Work Section */}
-      <section id="work" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
+      <section ref={workRef as any} id="work" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
+        
+        {workRecovering && (
+          <div className="absolute inset-0 z-50 bg-[#070809]/90 backdrop-blur flex items-center justify-center p-6">
+            <div className="font-mono text-sm text-[#FF2A2A] max-w-lg w-full space-y-2">
+              <div>&gt; access /work</div>
+              <div className="animate-pulse">[WARNING] unauthorized visual interference detected</div>
+              <div>&gt; isolating process...</div>
+              <div>&gt; restoring interface...</div>
+              <div className="text-[#D7FF00]">&gt; STATUS: WORK ARCHIVE SECURED ✓</div>
+            </div>
+          </div>
+        )}
 
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 pb-6 border-b border-white/10 gap-4">
+        <div className={`flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 pb-6 border-b border-white/10 gap-4 transition-all duration-700 ${workRecovering ? 'opacity-0 translate-x-10 blur-sm skew-x-12' : 'opacity-100 translate-x-0 blur-0 skew-x-0'}`}>
           <div>
             <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-2 flex items-center gap-2">
               <span className="w-2 h-2 bg-[#D7FF00]" />
@@ -802,10 +968,21 @@ export default function App() {
       </section>
 
       {/* Secondary Products Section */}
-      <section id="products" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10 bg-[#070809]">
+      <section ref={productsRef as any} id="products" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10 bg-[#070809]">
+
+        {productsRecovering && (
+          <div className="absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6">
+            <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-2">
+              <div>&gt; decrypt /products</div>
+              <div className="animate-pulse">██████████████████ 100%</div>
+              <div>&gt; mounting project archive...</div>
+              <div className="text-white mt-4">ACCESS GRANTED</div>
+            </div>
+          </div>
+        )}
 
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-white/10 gap-4">
+        <div className={`flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-white/10 gap-4 transition-opacity duration-1000 ${productsRecovering ? 'opacity-0' : 'opacity-100'}`}>
           <div>
             <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-2 flex items-center gap-2">
               <span className="w-2 h-2 bg-[#D7FF00]" />
@@ -897,16 +1074,16 @@ export default function App() {
       </section>
 
       {/* Editorial About Section */}
-      <section id="about" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+      <section ref={aboutRef as any} id="about" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
+        <div className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 transition-all duration-1000 ${aboutRecovering ? 'opacity-10 blur-sm scale-95' : 'opacity-100 blur-0 scale-100'}`}>
 
           <div className="lg:col-span-5">
             <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-3 flex items-center gap-2">
               <span className="w-2 h-2 bg-[#D7FF00]" />
-              <span>ENGINEER PROFILE & PHILOSOPHY</span>
+              <span>{aboutRecovering ? 'A_H_M_E_D_E_R_R' : 'ENGINEER PROFILE & PHILOSOPHY'}</span>
             </div>
             <h2 className="font-sans font-black text-3xl sm:text-5xl uppercase tracking-tight text-white leading-none mb-6">
-              I BUILD DIGITAL EXPERIENCES WITH A FOCUS ON DESIGN, INTERACTION AND DETAIL.
+              {aboutRecovering ? 'I_B_U_I_L_D_D_I_G_I_T_A_L' : 'I BUILD DIGITAL EXPERIENCES WITH A FOCUS ON DESIGN, INTERACTION AND DETAIL.'}
             </h2>
 
             <div className="p-4 bg-[#0D1012] border border-white/10 font-mono text-xs text-white/60 space-y-2">
@@ -958,9 +1135,22 @@ export default function App() {
       </section>
 
       {/* Capabilities / Technical Matrix Section */}
-      <section id="capabilities" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10 bg-[#070809]">
+      <section ref={capabilitiesRef as any} id="capabilities" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10 bg-[#070809]">
 
-        <div className="mb-12 pb-6 border-b border-white/10">
+        {capabilitiesRecovering && (
+          <div className="absolute inset-0 z-50 bg-[#070809] flex flex-col justify-center items-center p-6">
+            <div className="font-mono text-sm text-[#D7FF00] max-w-lg w-full space-y-4">
+              <div className="text-white mb-6">&gt; CAPABILITY SCAN INITIALIZED</div>
+              <div className="flex justify-between"><span>UI ENGINEERING</span><span>████████████ 100%</span></div>
+              <div className="flex justify-between"><span>PRODUCT THINKING</span><span>██████████░░  88%</span></div>
+              <div className="flex justify-between"><span>INTERACTION DESIGN</span><span>███████████░  94%</span></div>
+              <div className="flex justify-between"><span>MOTION</span><span>█████████░░░  82%</span></div>
+              <div className="text-white mt-8 animate-pulse">SYSTEM STATUS: OPTIMAL</div>
+            </div>
+          </div>
+        )}
+
+        <div className={`mb-12 pb-6 border-b border-white/10 transition-opacity duration-1000 ${capabilitiesRecovering ? 'opacity-0' : 'opacity-100'}`}>
           <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-2 flex items-center gap-2">
             <span className="w-2 h-2 bg-[#D7FF00]" />
             <span>TECHNICAL DOMAINS & CAPABILITIES</span>
@@ -1009,8 +1199,22 @@ export default function App() {
       </section>
 
       {/* Interactive Contact System Section */}
-      <section id="contact" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section ref={contactRef as any} id="contact" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
+        
+        {contactRecovering && (
+          <div className="absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6">
+            <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-3">
+              <div>&gt; establishing secure connection...</div>
+              <div className="animate-pulse">..............</div>
+              <div>connection established.</div>
+              <div className="mt-4 text-white/50">&gt; channel: AHMED.PORTFOLIO</div>
+              <div className="text-white/50">&gt; encryption: ACTIVE</div>
+              <div className="mt-4 font-bold text-white">READY FOR TRANSMISSION_</div>
+            </div>
+          </div>
+        )}
+
+        <div className={`grid grid-cols-1 lg:grid-cols-12 gap-12 items-center transition-all duration-1000 ${contactRecovering ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
 
           <div className="lg:col-span-7 space-y-6">
             <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest flex items-center gap-2">
