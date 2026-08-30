@@ -866,7 +866,7 @@ export default function App() {
               title="Interact with ANIMA System"
             >
               <Lottie
-                animationData={animaBotAnimation}
+                src={animaBotAnimation}
                 className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_40px_rgba(215,255,0,0.15)]"
                 loop={true}
                 autoplay={true}
