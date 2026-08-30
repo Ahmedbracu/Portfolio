@@ -489,6 +489,41 @@ export default function App() {
     { type: 'sys', text: 'Type "help" to list all available system diagnostics.' }
   ]);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const botRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let frame: number;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      targetX = (e.clientX / window.innerWidth) - 0.5;
+      targetY = (e.clientY / window.innerHeight) - 0.5;
+    };
+
+    const animate = () => {
+      currentX += (targetX - currentX) * 0.1;
+      currentY += (targetY - currentY) * 0.1;
+
+      if (botRef.current) {
+        // Invert Y for correct look up/down, X for left/right
+        const rotateX = currentY * -45;
+        const rotateY = currentX * 45;
+        botRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      }
+      frame = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    frame = requestAnimationFrame(animate);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -819,13 +854,24 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex justify-center items-center lg:justify-end hidden sm:flex">
-            <Lottie
-              src={animaBotAnimation}
-              className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] opacity-90 hover:opacity-100 transition-opacity drop-shadow-2xl"
-              loop={true}
-              autoplay={true}
-            />
+          <div className="flex justify-center items-center lg:justify-end hidden sm:flex" style={{ perspective: '1000px' }}>
+            <div 
+              ref={botRef} 
+              className="cursor-pointer will-change-transform"
+              onClick={() => {
+                playClick();
+                setTerminalOpen(true);
+                setHistory(prev => [...prev, { type: 'sys', text: "ANIMA SYSTEM: Let's check the terminal and navigate through it." }]);
+              }}
+              title="Interact with ANIMA System"
+            >
+              <Lottie
+                animationData={animaBotAnimation}
+                className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] opacity-90 hover:opacity-100 transition-opacity drop-shadow-[0_0_40px_rgba(215,255,0,0.15)]"
+                loop={true}
+                autoplay={true}
+              />
+            </div>
           </div>
         </div>
 
