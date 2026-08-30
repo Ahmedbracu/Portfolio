@@ -153,18 +153,6 @@ const PRIMARY_PROJECTS: Project[] = [
 
 const SECONDARY_PROJECTS: Project[] = [
   {
-    id: 'hasharc-studio',
-    number: '07',
-    title: 'HASHARC STUDIO',
-    category: 'CREATIVE TECH // WEB APPLICATION',
-    description: 'High-performance digital engine and studio application designed for real-time asset rendering and interactive project showcasing.',
-    techStack: ['React', 'Tailwind', 'Vercel Pipeline', 'Studio API'],
-    year: '2026',
-    href: 'https://hasharc-studio-webapp.vercel.app/',
-    type: 'Live Web Platform',
-    imageSrc: 'https://raw.githubusercontent.com/ahmedabubakar16/assets/main/hasharc.jpg'
-  },
-  {
     id: 'doccheck',
     number: '08',
     title: 'DOCCHECK',
@@ -480,6 +468,7 @@ export default function App() {
   }, []);
 
   const { ref: workRef, isRecovering: workRecovering } = useSectionRecovery('work', 1000);
+  const { ref: hasharcRef, isRecovering: hasharcRecovering } = useSectionRecovery('hasharc', 1200);
   const { ref: productsRef, isRecovering: productsRecovering } = useSectionRecovery('products', 1200);
   const { ref: aboutRef, isRecovering: aboutRecovering } = useSectionRecovery('about', 1400);
   const { ref: capabilitiesRef, isRecovering: capabilitiesRecovering } = useSectionRecovery('capabilities', 1000);
@@ -983,6 +972,74 @@ export default function App() {
           })}
         </div>
 
+      </section>
+
+      {/* Startup & Venture Section */}
+      <section ref={hasharcRef as any} id="hasharc" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
+
+        <div className={`absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6 transition-all duration-700 ease-in-out ${hasharcRecovering ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-2">
+            <div>&gt; initialize /hasharc_studio</div>
+            <div className="animate-pulse">LOADING VENTURE DATA...</div>
+            <div className="text-white mt-4">SYSTEM READY</div>
+          </div>
+        </div>
+
+        {/* Section Header */}
+        <div className={`mb-12 sm:mb-16 pb-6 border-b border-white/10 transition-all duration-1000 ${hasharcRecovering ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
+          <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-2 flex items-center gap-2">
+            <span className="w-2 h-2 bg-[#D7FF00]" />
+            <span>VENTURE & STARTUP INITIATIVE</span>
+          </div>
+          <h2 className="font-sans font-black text-3xl sm:text-5xl uppercase tracking-tight text-white">
+            HASHARC STUDIO
+          </h2>
+        </div>
+
+        {/* Content */}
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center transition-all duration-1000 delay-300 ${hasharcRecovering ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
+          
+          <div className="space-y-6">
+            <p className="font-sans text-base sm:text-lg text-[#9AA0A3] leading-relaxed">
+              A showcase of full-stack digital products, web applications, and interactive platforms engineered by Ahmed Abu Bakar at his startup <strong className="text-white">HASHARC Studio</strong> and collaborative initiatives, focusing on functional usability and clean UI design.
+            </p>
+            
+            <div className="flex flex-wrap gap-2 pt-2 font-mono text-[10px] sm:text-xs">
+              {['React', 'Tailwind', 'Vercel Pipeline', 'Studio API'].map((tech) => (
+                <span key={tech} className="px-2.5 py-1 bg-[#111416] border border-white/10 text-white/80 rounded-none uppercase">
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            <div className="pt-4">
+              <a
+                href="https://hasharc-studio-webapp.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={playClick}
+                onMouseEnter={playHover}
+                className="inline-flex px-6 py-4 bg-[#D7FF00] text-black font-bold uppercase tracking-widest hover:bg-white transition-all items-center space-x-3 shadow-xl"
+              >
+                <span>VISIT HASHARC STUDIO</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+
+          <div className="bg-[#0D1012] border border-white/10 p-4 relative group">
+            <div className="absolute inset-0 bg-[#D7FF00]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+            <img 
+              src="https://raw.githubusercontent.com/ahmedabubakar16/assets/main/hasharc.jpg" 
+              alt="HASHARC STUDIO" 
+              className="w-full h-auto border border-white/5 relative z-0 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+            />
+            {/* Decorative Corner Accents */}
+            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#D7FF00] -translate-x-1 -translate-y-1" />
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-[#D7FF00] translate-x-1 translate-y-1" />
+          </div>
+
+        </div>
       </section>
 
       {/* Secondary Products Section */}
