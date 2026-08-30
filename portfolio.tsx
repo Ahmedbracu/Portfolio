@@ -341,17 +341,37 @@ const useSectionRecovery = (sectionId: string, durationMs: number = 1000) => {
 };
 
 const AmbientBackground = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     let frame: number;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
     const handleMouseMove = (e: MouseEvent) => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 });
-      });
+      targetX = e.clientX / window.innerWidth - 0.5;
+      targetY = e.clientY / window.innerHeight - 0.5;
     };
+
+    const animate = () => {
+      currentX += (targetX - currentX) * 0.05; // Smooth interpolation
+      currentY += (targetY - currentY) * 0.05;
+
+      if (containerRef.current) {
+        const children = containerRef.current.children;
+        for (let i = 0; i < children.length; i++) {
+          const el = children[i] as HTMLElement;
+          el.style.transform = `translate(${currentX * (i + 1) * 20}px, ${currentY * (i + 1) * 20}px)`;
+        }
+      }
+      frame = requestAnimationFrame(animate);
+    };
+
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    frame = requestAnimationFrame(animate);
+    
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(frame);
@@ -364,7 +384,7 @@ const AmbientBackground = () => {
   ], []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {fragments.map((frag, i) => (
         <div 
           key={i} 
@@ -372,8 +392,6 @@ const AmbientBackground = () => {
           style={{
             top: `${(i * 13) % 100}%`,
             left: `${(i * 27) % 100}%`,
-            transform: `translate(${mousePos.x * (i + 1) * 20}px, ${mousePos.y * (i + 1) * 20}px)`,
-            transition: 'transform 0.5s ease-out',
             fontSize: `${Math.max(10, (i % 3) * 14)}px`
           }}
         >
@@ -386,6 +404,7 @@ const AmbientBackground = () => {
 
 const BootSequence = ({ onComplete }: { onComplete: () => void }) => {
   const [lines, setLines] = useState<string[]>([]);
+  const [fadingOut, setFadingOut] = useState(false);
   
   useEffect(() => {
     const sequence = [
@@ -408,12 +427,13 @@ const BootSequence = ({ onComplete }: { onComplete: () => void }) => {
     });
     
     setTimeout(() => {
-      onComplete();
+      setFadingOut(true);
+      setTimeout(onComplete, 700);
     }, delay + 1000);
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#070809] flex flex-col justify-center items-center p-6">
+    <div className={`fixed inset-0 z-50 bg-[#070809] flex flex-col justify-center items-center p-6 transition-opacity duration-700 ease-in-out ${fadingOut ? 'opacity-0' : 'opacity-100'}`}>
       <div className="w-full max-w-lg font-mono text-xs sm:text-sm text-[#D7FF00] space-y-2">
         {lines.map((line, i) => (
           <div key={i}>{line}</div>
@@ -844,17 +864,15 @@ export default function App() {
       {/* Selected Work Section */}
       <section ref={workRef as any} id="work" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
         
-        {workRecovering && (
-          <div className="absolute inset-0 z-50 bg-[#070809]/90 backdrop-blur flex items-center justify-center p-6">
-            <div className="font-mono text-sm text-[#FF2A2A] max-w-lg w-full space-y-2">
-              <div>&gt; access /work</div>
-              <div className="animate-pulse">[WARNING] unauthorized visual interference detected</div>
-              <div>&gt; isolating process...</div>
-              <div>&gt; restoring interface...</div>
-              <div className="text-[#D7FF00]">&gt; STATUS: WORK ARCHIVE SECURED ✓</div>
-            </div>
+        <div className={`absolute inset-0 z-50 bg-[#070809]/90 backdrop-blur flex items-center justify-center p-6 transition-all duration-700 ease-in-out ${workRecovering ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className="font-mono text-sm text-[#FF2A2A] max-w-lg w-full space-y-2">
+            <div>&gt; access /work</div>
+            <div className="animate-pulse">[WARNING] unauthorized visual interference detected</div>
+            <div>&gt; isolating process...</div>
+            <div>&gt; restoring interface...</div>
+            <div className="text-[#D7FF00]">&gt; STATUS: WORK ARCHIVE SECURED ✓</div>
           </div>
-        )}
+        </div>
 
         {/* Section Header */}
         <div className={`flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 pb-6 border-b border-white/10 gap-4 transition-all duration-700 ${workRecovering ? 'opacity-0 translate-x-10 blur-sm skew-x-12' : 'opacity-100 translate-x-0 blur-0 skew-x-0'}`}>
@@ -970,16 +988,14 @@ export default function App() {
       {/* Secondary Products Section */}
       <section ref={productsRef as any} id="products" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10 bg-[#070809]">
 
-        {productsRecovering && (
-          <div className="absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6">
-            <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-2">
-              <div>&gt; decrypt /products</div>
-              <div className="animate-pulse">██████████████████ 100%</div>
-              <div>&gt; mounting project archive...</div>
-              <div className="text-white mt-4">ACCESS GRANTED</div>
-            </div>
+        <div className={`absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6 transition-all duration-700 ease-in-out ${productsRecovering ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-2">
+            <div>&gt; decrypt /products</div>
+            <div className="animate-pulse">██████████████████ 100%</div>
+            <div>&gt; mounting project archive...</div>
+            <div className="text-white mt-4">ACCESS GRANTED</div>
           </div>
-        )}
+        </div>
 
         {/* Section Header */}
         <div className={`flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-white/10 gap-4 transition-opacity duration-1000 ${productsRecovering ? 'opacity-0' : 'opacity-100'}`}>
@@ -1137,18 +1153,16 @@ export default function App() {
       {/* Capabilities / Technical Matrix Section */}
       <section ref={capabilitiesRef as any} id="capabilities" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10 bg-[#070809]">
 
-        {capabilitiesRecovering && (
-          <div className="absolute inset-0 z-50 bg-[#070809] flex flex-col justify-center items-center p-6">
-            <div className="font-mono text-sm text-[#D7FF00] max-w-lg w-full space-y-4">
-              <div className="text-white mb-6">&gt; CAPABILITY SCAN INITIALIZED</div>
-              <div className="flex justify-between"><span>UI ENGINEERING</span><span>████████████ 100%</span></div>
-              <div className="flex justify-between"><span>PRODUCT THINKING</span><span>██████████░░  88%</span></div>
-              <div className="flex justify-between"><span>INTERACTION DESIGN</span><span>███████████░  94%</span></div>
-              <div className="flex justify-between"><span>MOTION</span><span>█████████░░░  82%</span></div>
-              <div className="text-white mt-8 animate-pulse">SYSTEM STATUS: OPTIMAL</div>
-            </div>
+        <div className={`absolute inset-0 z-50 bg-[#070809] flex flex-col justify-center items-center p-6 transition-all duration-700 ease-in-out ${capabilitiesRecovering ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className="font-mono text-sm text-[#D7FF00] max-w-lg w-full space-y-4">
+            <div className="text-white mb-6">&gt; CAPABILITY SCAN INITIALIZED</div>
+            <div className="flex justify-between"><span>UI ENGINEERING</span><span>████████████ 100%</span></div>
+            <div className="flex justify-between"><span>PRODUCT THINKING</span><span>██████████░░  88%</span></div>
+            <div className="flex justify-between"><span>INTERACTION DESIGN</span><span>███████████░  94%</span></div>
+            <div className="flex justify-between"><span>MOTION</span><span>█████████░░░  82%</span></div>
+            <div className="text-white mt-8 animate-pulse">SYSTEM STATUS: OPTIMAL</div>
           </div>
-        )}
+        </div>
 
         <div className={`mb-12 pb-6 border-b border-white/10 transition-opacity duration-1000 ${capabilitiesRecovering ? 'opacity-0' : 'opacity-100'}`}>
           <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-2 flex items-center gap-2">
@@ -1201,18 +1215,16 @@ export default function App() {
       {/* Interactive Contact System Section */}
       <section ref={contactRef as any} id="contact" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
         
-        {contactRecovering && (
-          <div className="absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6">
-            <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-3">
-              <div>&gt; establishing secure connection...</div>
-              <div className="animate-pulse">..............</div>
-              <div>connection established.</div>
-              <div className="mt-4 text-white/50">&gt; channel: AHMED.PORTFOLIO</div>
-              <div className="text-white/50">&gt; encryption: ACTIVE</div>
-              <div className="mt-4 font-bold text-white">READY FOR TRANSMISSION_</div>
-            </div>
+        <div className={`absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6 transition-all duration-700 ease-in-out ${contactRecovering ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-3">
+            <div>&gt; establishing secure connection...</div>
+            <div className="animate-pulse">..............</div>
+            <div>connection established.</div>
+            <div className="mt-4 text-white/50">&gt; channel: AHMED.PORTFOLIO</div>
+            <div className="text-white/50">&gt; encryption: ACTIVE</div>
+            <div className="mt-4 font-bold text-white">READY FOR TRANSMISSION_</div>
           </div>
-        )}
+        </div>
 
         <div className={`grid grid-cols-1 lg:grid-cols-12 gap-12 items-center transition-all duration-1000 ${contactRecovering ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
 
