@@ -26,6 +26,30 @@ const corruptionLines = [
   "> system override engaged."
 ];
 
+const GlitchBlocks = () => {
+  // Generate heavy databending blocks
+  const blocks = Array.from({ length: 80 }).map((_, i) => {
+    const top = Math.random() * 100;
+    const left = Math.random() * 100;
+    const width = Math.random() * 40 + 2;
+    const height = Math.random() * 15 + 1;
+    const colors = ['bg-red-500', 'bg-blue-600', 'bg-green-500', 'bg-fuchsia-500', 'bg-cyan-400', 'bg-white', 'bg-yellow-400', 'bg-black'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const animDuration = Math.random() * 0.2 + 0.05;
+
+    return (
+      <motion.div
+        key={i}
+        className={`absolute ${color} mix-blend-difference z-[60]`}
+        style={{ top: `${top}%`, left: `${left}%`, width: `${width}%`, height: `${height}%` }}
+        animate={{ opacity: [0, 1, 0.5, 1, 0], x: [0, Math.random() * 60 - 30, 0] }}
+        transition={{ duration: animDuration, repeat: Infinity, repeatType: "mirror" }}
+      />
+    );
+  });
+  return <div className="absolute inset-0 pointer-events-none overflow-hidden">{blocks}</div>;
+};
+
 export function BootSequence({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState<'bios' | 'corruption' | 'download' | 'scramble' | 'input' | 'glitch' | 'done'>('bios');
   const [biosIndex, setBiosIndex] = useState(0);
@@ -34,7 +58,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
   const [inputText, setInputText] = useState('');
   
   // Scramble state
-  const targetText = 'Print ("Hello World!")';
+  const targetText = 'Print("HelloWorld!")';
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}|:<>?~Ψ§ĦÐ╬╗ΩΔ█∑█Σ╬∂Ω';
   const [scrambleDisplay, setScrambleDisplay] = useState(Array(targetText.length).fill(' '));
   const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
@@ -147,7 +171,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
   }, [phase, onComplete, targetText.length]);
 
   useEffect(() => {
-    if (phase === 'input' && inputText.trim().toLowerCase() === 'hello world!') {
+    if (phase === 'input' && inputText.trim().toLowerCase() === 'helloworld!') {
       setTimeout(() => setPhase('glitch'), 300);
     }
   }, [phase, inputText]);
@@ -239,7 +263,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
             {/* Phase 4 Render (User Input) */}
             {(phase === 'input' || phase === 'glitch') && (
               <div className="mt-6">
-                <div className="text-white/60 mb-2">VERIFICATION REQUIRED: PLEASE TYPE "Hello World!" TO CONTINUE</div>
+                <div className="text-white/60 mb-2">VERIFICATION REQUIRED: PLEASE TYPE "HelloWorld!" TO CONTINUE</div>
                 <div className="text-white text-base sm:text-lg lg:text-xl font-bold tracking-widest flex items-center">
                   <span className="text-[#D7FF00] mr-3">&gt;</span>
                   <span className="text-white">{inputText}</span>
@@ -250,7 +274,10 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
           </div>
         )}
 
-        {/* Glitch Overlay effects */}
+        {/* Heavy Glitch Block Overlay */}
+        {isGlitching && <GlitchBlocks />}
+
+        {/* Glitch Tearing Overlay effects */}
         {isGlitching && (
           <>
             <div className="absolute inset-0 bg-white mix-blend-difference opacity-30 z-40" />
