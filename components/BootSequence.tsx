@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const biosLines = [
   "Phoenix BIOS 4.0 Release 6.0",
@@ -27,10 +27,11 @@ const corruptionLines = [
 ];
 
 export function BootSequence({ onComplete }: { onComplete: () => void }) {
-  const [phase, setPhase] = useState<'bios' | 'corruption' | 'download' | 'scramble' | 'glitch' | 'done'>('bios');
+  const [phase, setPhase] = useState<'bios' | 'corruption' | 'download' | 'scramble' | 'input' | 'glitch' | 'done'>('bios');
   const [biosIndex, setBiosIndex] = useState(0);
   const [corruptionIndex, setCorruptionIndex] = useState(0);
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [inputText, setInputText] = useState('');
   
   // Scramble state
   const targetText = 'Print ("Hello World!")';
@@ -103,7 +104,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
         if (lockIndex >= targetText.length) {
           clearInterval(scrambleInterval);
           clearInterval(lockInterval);
-          setTimeout(() => setPhase('glitch'), 500); 
+          setTimeout(() => setPhase('input'), 500); 
           return;
         }
         currentLocked.add(lockIndex);
@@ -117,20 +118,39 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
       };
     }
 
-    // Phase 4: Glitch
+    // Phase 4: Input
+    if (phase === 'input') {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Backspace') {
+          setInputText(prev => prev.slice(0, -1));
+        } else if (e.key.length === 1) {
+          setInputText(prev => prev + e.key);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+
+    // Phase 5: Glitch
     if (phase === 'glitch') {
       setTimeout(() => {
         setPhase('done');
       }, 800); // 800ms glitch duration
     }
 
-    // Phase 5: Done (Fade Out)
+    // Phase 6: Done (Fade Out)
     if (phase === 'done') {
       setTimeout(() => {
         onComplete();
       }, 500); // give it time to fade out
     }
-  }, [phase, onComplete]);
+  }, [phase, onComplete, targetText.length]);
+
+  useEffect(() => {
+    if (phase === 'input' && inputText.trim().toLowerCase() === 'hello world!') {
+      setTimeout(() => setPhase('glitch'), 300);
+    }
+  }, [phase, inputText]);
 
   const renderProgressBar = () => {
     const totalBars = 36;
@@ -145,7 +165,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
       initial={{ opacity: 1 }}
       animate={{ opacity: phase === 'done' ? 0 : 1 }}
       transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-[100] bg-[#070809] flex flex-col p-6 sm:p-12 pb-16 sm:pb-24 font-mono text-xs sm:text-sm overflow-hidden pointer-events-none"
+      className="fixed inset-0 z-[100] bg-[#050505] flex flex-col p-6 sm:p-12 pb-16 sm:pb-24 font-mono text-xs sm:text-sm overflow-hidden pointer-events-none"
     >
       <motion.div
         animate={isGlitching ? {
@@ -173,12 +193,12 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
           </div>
         )}
 
-        {/* Terminal/Hacking Phase - Centered/Bottom aligned, Green/Red text */}
+        {/* Terminal/Hacking Phase - Top Left aligned, Green/Red text */}
         {phase !== 'bios' && (
-          <div className="flex-grow flex flex-col justify-end max-w-3xl w-full mx-auto space-y-2 text-[#D7FF00]">
+          <div className="flex-grow flex flex-col justify-start w-full space-y-2 text-[#D7FF00]">
             
             {/* Phase 1 Render */}
-            {(phase === 'corruption' || phase === 'download' || phase === 'scramble' || phase === 'glitch') && (
+            {(phase === 'corruption' || phase === 'download' || phase === 'scramble' || phase === 'input' || phase === 'glitch') && (
               <div className="space-y-1 opacity-70">
                 {corruptionLines.slice(0, corruptionIndex + 1).map((line, i) => (
                   <div key={i}>{line}</div>
@@ -187,7 +207,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
             )}
 
             {/* Phase 2 Render */}
-            {(phase === 'download' || phase === 'scramble' || phase === 'glitch') && (
+            {(phase === 'download' || phase === 'scramble' || phase === 'input' || phase === 'glitch') && (
               <div className="mt-4">
                 <div className="text-white/60">&gt; downloading portfolio_ahmed.sys to local...</div>
                 <div className="text-[#FF2A2A]">{renderProgressBar()}</div>
@@ -195,7 +215,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
             )}
 
             {/* Phase 3 Render */}
-            {(phase === 'scramble' || phase === 'glitch') && (
+            {(phase === 'scramble' || phase === 'input' || phase === 'glitch') && (
               <div className="mt-8">
                 <div className="text-white text-base sm:text-lg lg:text-xl font-bold tracking-widest flex">
                   <span className="text-[#D7FF00] mr-3">&gt;</span>
@@ -207,6 +227,20 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
                       {char}
                     </span>
                   ))}
+                  {phase === 'scramble' && (
+                    <span className="animate-pulse ml-1 inline-block w-2.5 h-5 bg-[#D7FF00]" />
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Phase 4 Render (User Input) */}
+            {(phase === 'input' || phase === 'glitch') && (
+              <div className="mt-6">
+                <div className="text-white/60 mb-2">VERIFICATION REQUIRED: PLEASE TYPE "Hello World!" TO CONTINUE</div>
+                <div className="text-white text-base sm:text-lg lg:text-xl font-bold tracking-widest flex items-center">
+                  <span className="text-[#D7FF00] mr-3">&gt;</span>
+                  <span className="text-white">{inputText}</span>
                   <span className="animate-pulse ml-1 inline-block w-2.5 h-5 bg-[#D7FF00]" />
                 </div>
               </div>
