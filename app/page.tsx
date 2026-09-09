@@ -608,28 +608,457 @@ export default function PortfolioApp() {
           </div>
         </section>
 
-        {/* Other sections follow similar FadeInSection + StaggerContainer logic... */}
-        {/* I am truncating HASHARC, PRODUCTS, ABOUT to save token space in execution but they follow the same patterns */}
-        
-        <section id="contact" className="py-24 px-4 sm:px-6 md:px-8 border-t border-white/10 bg-white text-black relative z-10 overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-          <div className="max-w-7xl mx-auto relative z-10">
-            <FadeInSection className="text-center max-w-4xl mx-auto">
-              <div className="font-mono text-xs font-bold text-black/50 uppercase tracking-widest mb-4">
-                [ SYSTEM OFFLINE ? ] // INITIATE COMMS
+        {/* Startup & Venture Section */}
+        <section ref={hasharcRef as any} id="hasharc" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
+
+          <AnimatePresence>
+            {hasharcRecovering && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6"
+              >
+                <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-2">
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }}>&gt; initialize /hasharc_studio</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="animate-pulse">LOADING VENTURE DATA...</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="text-white mt-4">SYSTEM READY</motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Section Header */}
+          <FadeInSection className="mb-12 sm:mb-16 pb-6 border-b border-white/10">
+            <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-2 flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#D7FF00]" />
+              <span>VENTURE & STARTUP INITIATIVE</span>
+            </div>
+            <h2 className="font-sans font-black text-3xl sm:text-5xl uppercase tracking-tight text-white">
+              <TextReveal text="HASHARC STUDIO" />
+            </h2>
+          </FadeInSection>
+
+          {/* Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            
+            <StaggerContainer className="space-y-6">
+              <StaggerItem>
+                <p className="font-sans text-base sm:text-lg text-[#9AA0A3] leading-relaxed">
+                  A showcase of full-stack digital products, web applications, and interactive platforms engineered by Ahmed Abu Bakar at his startup <strong className="text-white">HASHARC Studio</strong> and collaborative initiatives, focusing on functional usability and clean UI design.
+                </p>
+              </StaggerItem>
+              
+              <StaggerItem className="flex flex-wrap gap-2 pt-2 font-mono text-[10px] sm:text-xs">
+                {['React', 'Tailwind', 'Vercel Pipeline', 'Studio API'].map((tech) => (
+                  <span key={tech} className="px-2.5 py-1 bg-[#111416] border border-white/10 text-white/80 rounded-none uppercase">
+                    {tech}
+                  </span>
+                ))}
+              </StaggerItem>
+
+              <StaggerItem className="pt-4">
+                <a
+                  href="https://hasharc-studio-webapp.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={playClick}
+                  onMouseEnter={playHover}
+                  className="inline-flex px-6 py-4 bg-[#D7FF00] text-black font-bold uppercase tracking-widest hover:bg-white transition-all items-center space-x-3 shadow-xl"
+                >
+                  <span>VISIT HASHARC STUDIO</span>
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </StaggerItem>
+            </StaggerContainer>
+
+            <FadeInSection delay={0.2} className="bg-[#0D1012] border border-white/10 p-4 relative group">
+              <div className="absolute inset-0 bg-[#D7FF00]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+              <img 
+                src="https://raw.githubusercontent.com/ahmedabubakar16/assets/main/hasharc.jpg" 
+                alt="HASHARC STUDIO" 
+                className="w-full h-auto border border-white/5 relative z-0 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+              />
+              {/* Decorative Corner Accents */}
+              <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#D7FF00] -translate-x-1 -translate-y-1" />
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-[#D7FF00] translate-x-1 translate-y-1" />
+            </FadeInSection>
+
+          </div>
+        </section>
+
+        {/* Secondary Products Section */}
+        <section ref={productsRef as any} id="products" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10 bg-[#070809]">
+
+          <AnimatePresence>
+            {productsRecovering && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6"
+              >
+                <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-2">
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }}>&gt; decrypt /products</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="animate-pulse">██████████████████ 100%</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.5 }}>&gt; mounting project archive...</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.7 }} className="text-white mt-4">ACCESS GRANTED</motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Section Header */}
+          <FadeInSection className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-white/10 gap-4">
+            <div>
+              <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-2 flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#D7FF00]" />
+                <span>MOBILE & ACCESSIBILITY DIGITAL PRODUCTS</span>
               </div>
-              <h2 className="font-sans font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl uppercase tracking-tighter leading-[0.9]">
-                LET'S BUILD <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-black via-gray-700 to-black">SOMETHING</span><br/> AMAZING.
+              <h2 className="font-sans font-black text-3xl sm:text-5xl uppercase tracking-tight text-white">
+                <TextReveal text="OTHER DIGITAL PRODUCTS" />
               </h2>
-              <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-                <a href="mailto:ahmed.abubakar.dev@gmail.com" className="w-full sm:w-auto px-8 py-5 bg-black text-white font-bold uppercase tracking-widest hover:bg-[#D7FF00] hover:text-black transition-colors flex items-center justify-center space-x-3 text-sm">
-                  <span>ahmed.abubakar.dev@gmail.com</span>
-                  <ArrowUpRight className="w-4 h-4" />
+            </div>
+
+            {/* Filter Categories */}
+            <div className="flex flex-wrap gap-2 font-mono text-xs">
+              {['ALL', 'WEB', 'MOBILE', 'AI'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => { playClick(); setActiveCategory(cat); }}
+                  onMouseEnter={playHover}
+                  className={`px-3 py-1.5 border uppercase transition-all ${activeCategory === cat
+                      ? 'bg-[#D7FF00] text-black font-bold border-[#D7FF00]'
+                      : 'bg-[#111416] border-white/10 text-white/60 hover:text-white'
+                    }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </FadeInSection>
+
+          {/* Secondary Products Grid */}
+          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            <AnimatePresence>
+              {filteredProducts.map((proj, idx) => (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.4, delay: idx * 0.1 }}
+                  key={proj.id}
+                  className="bg-[#0D1012] border border-white/10 p-5 sm:p-6 hover:border-[#D7FF00]/50 transition-all flex flex-col justify-between group"
+                >
+                  <div>
+                    <div className="flex items-center justify-between font-mono text-xs text-white/40 mb-3">
+                      <span className="text-[#D7FF00] font-bold">[{proj.number}]</span>
+                      <span className="uppercase">{proj.type}</span>
+                    </div>
+
+                    {proj.imageSrc && (
+                      <div className="w-full h-48 sm:h-56 mb-5 overflow-hidden rounded border border-white/10 bg-black/40 relative">
+                        <img
+                          src={proj.imageSrc}
+                          alt={proj.title}
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+
+                    <h3 className="font-sans font-black text-2xl uppercase tracking-tight text-white group-hover:text-[#D7FF00] transition-colors mb-2">
+                      {proj.title}
+                    </h3>
+                    <p className="font-mono text-xs text-white/40 mb-3 uppercase tracking-wider">
+                      {proj.category}
+                    </p>
+                    <p className="font-sans text-xs sm:text-sm text-[#9AA0A3] leading-relaxed mb-4">
+                      {proj.description}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap gap-1.5 mb-5 font-mono text-[10px]">
+                      {proj.techStack.map(t => (
+                        <span key={t} className="px-2 py-0.5 bg-black/60 border border-white/10 text-white/70">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+
+                    <a
+                      href={`/projects/${proj.id}`}
+                      onClick={playClick}
+                      onMouseEnter={playHover}
+                      className="w-full py-2.5 bg-[#111416] border border-white/15 text-white hover:bg-[#D7FF00] hover:text-black hover:border-[#D7FF00] transition-all font-mono text-xs uppercase font-bold flex items-center justify-center space-x-2"
+                    >
+                      <span>VIEW CASE STUDY</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </section>
+
+        {/* Editorial About Section */}
+        <section ref={aboutRef as any} id="about" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+
+            <StaggerContainer className="lg:col-span-5">
+              <StaggerItem className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#D7FF00]" />
+                <span>ENGINEER PROFILE & PHILOSOPHY</span>
+              </StaggerItem>
+              <StaggerItem>
+                <h2 className="font-sans font-black text-3xl sm:text-5xl uppercase tracking-tight text-white leading-none mb-6">
+                  <TextReveal text="I BUILD DIGITAL EXPERIENCES WITH A FOCUS ON DESIGN, INTERACTION AND DETAIL." />
+                </h2>
+              </StaggerItem>
+
+              <StaggerItem className="p-4 bg-[#0D1012] border border-white/10 font-mono text-xs text-white/60 space-y-2">
+                <div className="flex justify-between border-b border-white/5 pb-1">
+                  <span>NAME</span>
+                  <span className="text-white">AHMED ABU BAKAR</span>
+                </div>
+                <div className="flex justify-between border-b border-white/5 pb-1">
+                  <span>LOCATION</span>
+                  <span className="text-white">DHAKA, BANGLADESH</span>
+                </div>
+                <div className="flex justify-between border-b border-white/5 pb-1">
+                  <span>PRIMARY ROLE</span>
+                  <span className="text-[#D7FF00]">CREATIVE DEVELOPER</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>SPECIALIZATION</span>
+                  <span className="text-white">FRONTEND & DIGITAL UI</span>
+                </div>
+              </StaggerItem>
+            </StaggerContainer>
+
+            <StaggerContainer initialDelay={0.3} className="lg:col-span-7 space-y-6 font-sans text-base text-[#9AA0A3] leading-relaxed">
+              <StaggerItem>
+                <p>
+                  I am a creative developer with a passion for constructing high-contrast visual interfaces, dark industrial layouts, and lightning-fast web architecture. My work operates at the intersection of editorial art direction and precision frontend software engineering.
+                </p>
+              </StaggerItem>
+              <StaggerItem>
+                <p>
+                  Rather than relying on generic AI templates or bloated libraries, I treat every project as a bespoke digital engine—crafted line by line using modern web standards, tactile micro-interactions, clean layout grids, and performance-first codebases.
+                </p>
+              </StaggerItem>
+
+              <StaggerItem className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 font-mono text-xs">
+                <div className="p-4 bg-[#111416] border border-white/10">
+                  <span className="text-[#D7FF00] font-bold block mb-1">// DESIGN DIRECTIVES</span>
+                  <p className="text-white/70 text-xs leading-normal">
+                    Sharp typography, high contrast, non-symmetrical grids, subtle telemetry accents, and dark monochrome palettes.
+                  </p>
+                </div>
+                <div className="p-4 bg-[#111416] border border-white/10">
+                  <span className="text-[#D7FF00] font-bold block mb-1">// ENGINEERING STANDARDS</span>
+                  <p className="text-white/70 text-xs leading-normal">
+                    React architecture, Next.js optimization, responsive breakpoints, clean accessibility, and zero layout shift.
+                  </p>
+                </div>
+              </StaggerItem>
+            </StaggerContainer>
+
+          </div>
+        </section>
+
+        {/* Capabilities / Technical Matrix Section */}
+        <section ref={capabilitiesRef as any} id="capabilities" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10 bg-[#070809]">
+
+          <AnimatePresence>
+            {capabilitiesRecovering && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-50 bg-[#070809] flex flex-col justify-center items-center p-6"
+              >
+                <div className="font-mono text-sm text-[#D7FF00] max-w-lg w-full space-y-4">
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="text-white mb-6">&gt; CAPABILITY SCAN INITIALIZED</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="flex justify-between"><span>UI ENGINEERING</span><span>████████████ 100%</span></motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="flex justify-between"><span>PRODUCT THINKING</span><span>██████████░░  88%</span></motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="flex justify-between"><span>INTERACTION DESIGN</span><span>███████████░  94%</span></motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="flex justify-between"><span>MOTION</span><span>█████████░░░  82%</span></motion.div>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="text-white mt-8 animate-pulse">SYSTEM STATUS: OPTIMAL</motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <FadeInSection className="mb-12 pb-6 border-b border-white/10">
+            <div className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest mb-2 flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#D7FF00]" />
+              <span>TECHNICAL DOMAINS & CAPABILITIES</span>
+            </div>
+            <h2 className="font-sans font-black text-3xl sm:text-5xl uppercase tracking-tight text-white">
+              <TextReveal text="SYSTEM CAPABILITIES" />
+            </h2>
+          </FadeInSection>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            {CAPABILITIES.map((cap, idx) => (
+              <FadeInSection key={cap.code} delay={idx * 0.1} className="bg-[#0D1012] border border-white/10 p-6 sm:p-8 hover:border-[#D7FF00]/50 transition-all flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between font-mono text-xs mb-4">
+                    <span className="text-[#D7FF00] font-bold">[{cap.code}]</span>
+                    <span className="text-white/40 uppercase">{cap.subtitle}</span>
+                  </div>
+                  <h3 className="font-sans font-black text-2xl sm:text-3xl uppercase tracking-tight text-white mb-3">
+                    {cap.title}
+                  </h3>
+                  <p className="font-sans text-sm text-[#9AA0A3] leading-relaxed mb-6">
+                    {cap.description}
+                  </p>
+                </div>
+
+                <div>
+                  <span className="font-mono text-[10px] text-white/40 uppercase block mb-2">// SPECIFICATION STACK</span>
+                  <div className="flex flex-wrap gap-2">
+                    {cap.skills.map((s) => (
+                      <span
+                        key={s}
+                        className="px-2.5 py-1 bg-[#171B1E] border border-white/10 font-mono text-xs text-white/80"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </FadeInSection>
+            ))}
+          </div>
+        </section>
+
+        {/* Interactive Contact System Section */}
+        <section ref={contactRef as any} id="contact" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
+          
+          <AnimatePresence>
+            {contactRecovering && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6"
+              >
+                <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-3">
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }}>&gt; establishing secure connection...</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="animate-pulse">..............</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.5 }}>connection established.</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.7 }} className="mt-4 text-white/50">&gt; channel: AHMED.PORTFOLIO</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.8 }} className="text-white/50">&gt; encryption: ACTIVE</motion.div>
+                  <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 1.0 }} className="mt-4 font-bold text-white">READY FOR TRANSMISSION_</motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+            <StaggerContainer className="lg:col-span-7 space-y-6">
+              <StaggerItem className="font-mono text-xs text-[#D7FF00] uppercase tracking-widest flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#D7FF00]" />
+                <span>INITIATE COLLABORATION</span>
+              </StaggerItem>
+
+              <StaggerItem>
+                <h2 className="font-sans font-black text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter text-white leading-none">
+                  <TextReveal text="LET'S BUILD SOMETHING WORTH REMEMBERING." />
+                </h2>
+              </StaggerItem>
+
+              <StaggerItem>
+                <p className="font-sans text-base sm:text-lg text-[#9AA0A3] max-w-xl">
+                  Currently open for selected client projects, frontend engineering roles, design agency collaborations, and digital product consulting for 2026.
+                </p>
+              </StaggerItem>
+
+              <StaggerItem className="pt-4 flex flex-wrap gap-4 font-mono text-xs">
+                <a
+                  href="mailto:ahmed.abubakar.dev@gmail.com"
+                  onClick={playClick}
+                  onMouseEnter={playHover}
+                  className="px-6 py-4 bg-[#D7FF00] text-black font-bold uppercase tracking-widest hover:bg-white transition-all flex items-center space-x-3 shadow-xl"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>START A PROJECT</span>
+                </a>
+
+                <a
+                  href="https://www.behance.net/ahmedabubakar16"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={playClick}
+                  onMouseEnter={playHover}
+                  className="px-6 py-4 bg-[#111416] border border-white/20 text-white font-bold uppercase tracking-widest hover:border-[#D7FF00] hover:text-[#D7FF00] transition-all flex items-center space-x-2"
+                >
+                  <span>BEHANCE PORTFOLIO</span>
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </StaggerItem>
+            </StaggerContainer>
+
+            <FadeInSection delay={0.4} className="lg:col-span-5 bg-[#0D1012] border border-white/10 p-6 sm:p-8 space-y-6 font-mono text-xs">
+              <div className="flex items-center justify-between pb-4 border-b border-white/10 text-white/50">
+                <span>COMMUNICATION CHANNELS</span>
+                <span className="text-[#D7FF00]">// DIRECT</span>
+              </div>
+
+              <div className="space-y-4">
+                <a
+                  href="mailto:ahmed.abubakar.dev@gmail.com"
+                  className="flex items-center justify-between p-3 bg-[#111416] border border-white/5 hover:border-[#D7FF00]/50 transition-all text-white group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Mail className="w-4 h-4 text-[#D7FF00]" />
+                    <span>EMAIL</span>
+                  </div>
+                  <span className="text-white/40 group-hover:text-white transition-colors truncate max-w-[180px]">
+                    ahmed.abubakar.dev@gmail.com
+                  </span>
+                </a>
+
+                <a
+                  href="https://www.behance.net/ahmedabubakar16"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-3 bg-[#111416] border border-white/5 hover:border-[#D7FF00]/50 transition-all text-white group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Globe className="w-4 h-4 text-[#D7FF00]" />
+                    <span>BEHANCE</span>
+                  </div>
+                  <span className="text-white/40 group-hover:text-white transition-colors truncate max-w-[180px]">
+                    /ahmedabubakar16
+                  </span>
+                </a>
+
+                <a
+                  href="https://github.com/ahmedabubakar16"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-3 bg-[#111416] border border-white/5 hover:border-[#D7FF00]/50 transition-all text-white group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Code className="w-4 h-4 text-[#D7FF00]" />
+                    <span>GITHUB</span>
+                  </div>
+                  <span className="text-white/40 group-hover:text-white transition-colors truncate max-w-[180px]">
+                    /ahmedabubakar16
+                  </span>
                 </a>
               </div>
             </FadeInSection>
           </div>
         </section>
+
 
       </main>
 
