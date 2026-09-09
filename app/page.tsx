@@ -332,7 +332,7 @@ const useSectionRecovery = (sectionId: string, durationMs: number = 1000) => {
 
 const AmbientBackground = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     let frame: number;
     let targetX = 0;
@@ -361,7 +361,7 @@ const AmbientBackground = () => {
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     frame = requestAnimationFrame(animate);
-    
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(frame);
@@ -376,8 +376,8 @@ const AmbientBackground = () => {
   return (
     <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {fragments.map((frag, i) => (
-        <div 
-          key={i} 
+        <div
+          key={i}
           className="absolute font-mono text-white opacity-[0.02] whitespace-nowrap select-none"
           style={{
             top: `${(i * 13) % 100}%`,
@@ -395,7 +395,7 @@ const AmbientBackground = () => {
 
 const PersistentSystemIndicator = () => {
   const [status, setStatus] = useState('ONLINE');
-  
+
   useEffect(() => {
     const handleStart = () => setStatus('RECOVERING');
     const handleEnd = () => setStatus('ONLINE');
@@ -478,7 +478,7 @@ export default function App() {
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     frame = requestAnimationFrame(animate);
-    
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(frame);
@@ -627,8 +627,8 @@ export default function App() {
 
       {/* Header / Primary Telemetry Navigation */}
       <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled
-          ? 'bg-[#070809]/90 backdrop-blur-md border-b border-white/10 py-3 shadow-2xl'
-          : 'bg-transparent py-4 sm:py-5 border-b border-white/5'
+        ? 'bg-[#070809]/90 backdrop-blur-md border-b border-white/10 py-3 shadow-2xl'
+        : 'bg-transparent py-4 sm:py-5 border-b border-white/5'
         }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-between">
 
@@ -815,8 +815,8 @@ export default function App() {
           </div>
 
           <div className="flex justify-center items-center lg:justify-end hidden sm:flex" style={{ perspective: '1000px' }}>
-            <div 
-              ref={botRef} 
+            <div
+              ref={botRef}
               className="cursor-pointer will-change-transform"
               onClick={() => {
                 playClick();
@@ -858,7 +858,7 @@ export default function App() {
 
       {/* Selected Work Section */}
       <section ref={workRef as any} id="work" className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
-        
+
         <div className={`absolute inset-0 z-50 bg-[#070809]/90 backdrop-blur flex items-center justify-center p-6 transition-all duration-700 ease-in-out ${workRecovering ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
           <div className="font-mono text-sm text-[#FF2A2A] max-w-lg w-full space-y-2">
             <div>&gt; access /work</div>
@@ -1004,12 +1004,12 @@ export default function App() {
 
         {/* Content */}
         <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center transition-all duration-1000 delay-300 ${hasharcRecovering ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-          
+
           <div className="space-y-6">
             <p className="font-sans text-base sm:text-lg text-[#9AA0A3] leading-relaxed">
               A showcase of full-stack digital products, web applications, and interactive platforms engineered by Ahmed Abu Bakar at his startup <strong className="text-white">HASHARC Studio</strong> and collaborative initiatives, focusing on functional usability and clean UI design.
             </p>
-            
+
             <div className="flex flex-wrap gap-2 pt-2 font-mono text-[10px] sm:text-xs">
               {['React', 'Tailwind', 'Vercel Pipeline', 'Studio API'].map((tech) => (
                 <span key={tech} className="px-2.5 py-1 bg-[#111416] border border-white/10 text-white/80 rounded-none uppercase">
@@ -1035,9 +1035,9 @@ export default function App() {
 
           <div className="bg-[#0D1012] border border-white/10 p-4 relative group">
             <div className="absolute inset-0 bg-[#D7FF00]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
-            <img 
-              src="https://raw.githubusercontent.com/ahmedabubakar16/assets/main/hasharc.jpg" 
-              alt="HASHARC STUDIO" 
+            <img
+              src="/assets/HASHARC STUDIO.png"
+              alt="HASHARC STUDIO"
               className="w-full h-auto border border-white/5 relative z-0 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
             />
             {/* Decorative Corner Accents */}
@@ -1080,8 +1080,8 @@ export default function App() {
                 onClick={() => { playClick(); setActiveCategory(cat); }}
                 onMouseEnter={playHover}
                 className={`px-3 py-1.5 border uppercase transition-all ${activeCategory === cat
-                    ? 'bg-[#D7FF00] text-black font-bold border-[#D7FF00]'
-                    : 'bg-[#111416] border-white/10 text-white/60 hover:text-white'
+                  ? 'bg-[#D7FF00] text-black font-bold border-[#D7FF00]'
+                  : 'bg-[#111416] border-white/10 text-white/60 hover:text-white'
                   }`}
               >
                 {cat}
@@ -1277,7 +1277,7 @@ export default function App() {
 
       {/* Interactive Contact System Section */}
       <section ref={contactRef as any} id="contact" className="py-20 sm:py-32 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto border-t border-white/10 relative z-10">
-        
+
         <div className={`absolute inset-0 z-50 bg-[#070809]/95 flex items-center justify-center p-6 transition-all duration-700 ease-in-out ${contactRecovering ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
           <div className="font-mono text-sm text-[#D7FF00] max-w-md w-full space-y-3">
             <div>&gt; establishing secure connection...</div>
@@ -1317,14 +1317,14 @@ export default function App() {
               </a>
 
               <a
-                href="https://www.behance.net/ahmedabubakar16"
+                href="https://hasharc-studio-webapp.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={playClick}
                 onMouseEnter={playHover}
                 className="px-6 py-4 bg-[#111416] border border-white/20 text-white font-bold uppercase tracking-widest hover:border-[#D7FF00] hover:text-[#D7FF00] transition-all flex items-center space-x-2"
               >
-                <span>BEHANCE PORTFOLIO</span>
+                <span>VISIT HASHARC</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
@@ -1512,10 +1512,10 @@ export default function App() {
                 <div
                   key={index}
                   className={`whitespace-pre-wrap ${item.type === 'user'
-                      ? 'text-[#D7FF00] font-bold'
-                      : item.type === 'error'
-                        ? 'text-[#FF2A2A]'
-                        : 'text-white/80'
+                    ? 'text-[#D7FF00] font-bold'
+                    : item.type === 'error'
+                      ? 'text-[#FF2A2A]'
+                      : 'text-white/80'
                     }`}
                 >
                   {item.text}
