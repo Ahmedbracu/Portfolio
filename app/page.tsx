@@ -1307,7 +1307,7 @@ export default function App() {
 
             <div className="pt-4 flex flex-wrap gap-4 font-mono text-xs">
               <a
-                href="mailto:ahmed.abubakar.dev@gmail.com"
+                href="mailto:ahmedabubakar.official@gmail.com"
                 onClick={playClick}
                 onMouseEnter={playHover}
                 className="px-6 py-4 bg-[#D7FF00] text-black font-bold uppercase tracking-widest hover:bg-white transition-all flex items-center space-x-3 shadow-xl"
@@ -1338,7 +1338,7 @@ export default function App() {
 
             <div className="space-y-4">
               <a
-                href="mailto:ahmed.abubakar.dev@gmail.com"
+                href="mailto:ahmedabubakar.official@gmail.com"
                 className="flex items-center justify-between p-3 bg-[#111416] border border-white/5 hover:border-[#D7FF00]/50 transition-all text-white group"
               >
                 <div className="flex items-center space-x-3">
@@ -1346,7 +1346,7 @@ export default function App() {
                   <span>EMAIL</span>
                 </div>
                 <span className="text-white/40 group-hover:text-white transition-colors truncate max-w-[180px]">
-                  ahmed.abubakar.dev@gmail.com
+                  ahmedabubakar.official@gmail.com
                 </span>
               </a>
 

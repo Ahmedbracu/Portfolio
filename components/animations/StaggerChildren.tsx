@@ -35,11 +35,11 @@ export function StaggerContainer({ children, className = "", staggerDelay = 0.08
 
 export function StaggerItem({ children, className = "" }: { children: ReactNode; className?: string }) {
   const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { type: "spring" as const, stiffness: 100, damping: 12 } 
+    hidden: { opacity: 0, y: 25 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring" as const, stiffness: 100, damping: 12 }
     },
   };
 
