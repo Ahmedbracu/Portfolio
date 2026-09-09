@@ -439,7 +439,14 @@ export default function App() {
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [showGrid, setShowGrid] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowGrid(prev => !prev);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [dhakaTime, setDhakaTime] = useState('');
 
@@ -664,23 +671,7 @@ export default function App() {
 
           {/* System Status Indicators & Audio Controls */}
           <div className="hidden lg:flex items-center space-x-4">
-            <button
-              onClick={() => { playClick(); setSoundEnabled(!soundEnabled); }}
-              onMouseEnter={playHover}
-              className="p-2 border border-white/10 hover:border-[#D7FF00]/50 text-white/60 hover:text-[#D7FF00] transition-all rounded"
-              title="Toggle Telemetry Audio"
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#D7FF00]" /> : <VolumeX className="w-4 h-4" />}
-            </button>
 
-            <button
-              onClick={() => { playClick(); setShowGrid(!showGrid); }}
-              onMouseEnter={playHover}
-              className={`p-2 border transition-all rounded ${showGrid ? 'border-[#D7FF00]/40 text-[#D7FF00]' : 'border-white/10 text-white/40'}`}
-              title="Toggle Grid Overlay"
-            >
-              <Sliders className="w-4 h-4" />
-            </button>
 
             <div className="flex items-center space-x-2 bg-[#111416] border border-white/10 px-3 py-1.5 rounded font-mono text-[10px]">
               <span className="relative flex h-2 w-2">
@@ -693,12 +684,7 @@ export default function App() {
 
           {/* Mobile Menu Toggle */}
           <div className="flex items-center space-x-2 md:hidden">
-            <button
-              onClick={() => { playClick(); setSoundEnabled(!soundEnabled); }}
-              className="p-2 border border-white/10 text-white/60 rounded"
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#D7FF00]" /> : <VolumeX className="w-4 h-4" />}
-            </button>
+
             <button
               onClick={() => { playClick(); setMobileMenuOpen(!mobileMenuOpen); }}
               className="p-2 border border-white/20 text-white rounded hover:border-[#D7FF00] transition-colors"
